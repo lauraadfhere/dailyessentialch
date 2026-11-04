@@ -1,0 +1,18 @@
+
+> daily-essential@0.1.0 dev
+> node ./node_modules/next/dist/bin/next dev --port 3001
+
+▲ Next.js 16.4.3 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://172.27.0.1:3001
+- Environments: .env.local
+✓ Ready in 2.8s
+✓ Running next.config.ts took 311ms
+[Error: Failed to open database
+
+Caused by:
+    0: Loading persistence directory failed
+    1: failed to remove file `\\?\C:\Users\DELL\Desktop\elspith\DAILYESSENTIAL2\daily-essential\.next\dev\cache\turbopack\v16.4.3-29bbeab0\00000409.sst`: Accès refusé. (os error 5)] {
+  code: 'GenericFailure'
+}
+[?25h

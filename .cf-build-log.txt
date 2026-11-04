@@ -1,0 +1,166 @@
+
+> daily-essential@0.1.0 cf:build
+> opennextjs-cloudflare build
+
+
+┌─────────────────────────────┐
+│ OpenNext — Cloudflare build │
+└─────────────────────────────┘
+
+WARN OpenNext is not fully compatible with Windows.
+WARN For optimal performance, it is recommended to use Windows Subsystem for Linux (WSL).
+WARN While OpenNext may function on Windows, it could encounter unpredictable failures during runtime.
+App directory: C:\Users\DELL\Desktop\elspith\DAILYESSENTIAL2\daily-essential
+Next.js version : 16.4.3
+@opennextjs/cloudflare version: 1.20.15
+@opennextjs/aws version: 4.1.14
+workerd compatibility_date: 2026-11-01
+
+┌─────────────────────────────────┐
+│ OpenNext — Building Next.js app │
+└─────────────────────────────────┘
+
+yarn run v1.22.22
+$ node ./node_modules/next/dist/bin/next build
+▲ Next.js 16.4.3 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 1265ms
+- Cache Components enabled
+- Partial Prefetching enabled
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 16.7s
+  Running TypeScript ...
+  Finished TypeScript in 39.7s ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/93) ...
+  Generating static pages using 3 workers (23/93) 
+  Generating static pages using 3 workers (46/93) 
+  Generating static pages using 3 workers (69/93) 
+✓ Generating static pages using 3 workers (93/93) in 13.1s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about
+├ ◐ /admin
+├ ◐ /admin/books
+├ ◐ /admin/books/new
+├ ◐ /admin/comments
+├ ○ /admin/login
+├ ◐ /admin/messages
+├ ◐ /admin/posts
+├   /admin/posts/[slug]
+│ └ ◐ /admin/posts/[slug]
+├ ◐ /admin/posts/new
+├ ◐ /admin/profile
+├ ◐ /admin/reviews
+├ ƒ /api/admin/books
+├ ƒ /api/admin/comments/[id]
+├ ƒ /api/admin/login
+├ ƒ /api/admin/logout
+├ ƒ /api/admin/messages/[id]
+├ ƒ /api/admin/notifications
+├ ƒ /api/admin/posts
+├ ƒ /api/admin/posts/[id]
+├ ƒ /api/admin/profile
+├ ƒ /api/admin/reviews/[id]
+├ ƒ /api/admin/reviews/[id]/reply
+├ ƒ /api/admin/reviews/[id]/reply/[replyId]
+├ ƒ /api/admin/uploads
+├ ƒ /api/comments
+├ ƒ /api/contact
+├ ƒ /api/posts
+├ ƒ /api/reviews
+├ ○ /apple-icon.png
+├ ○ /ar
+├ ○ /ar/about
+├ ◐ /ar/author
+├   /ar/books/[slug]
+│ ├ ◐ /ar/books/[slug]
+│ ├ ○ /ar/books/the-kingdom-behind-the-rainbow
+│ ├ ○ /ar/books/buckky-riff-discovers-the-mysterious-hat
+│ └ ◐ [+3 more paths]
+├ ○ /ar/contact
+├ ○ /ar/contact/sent
+├ ○ /ar/ebooks
+├ ○ /ar/faq
+├ ○ /ar/marketplace
+├   /ar/posts/[slug]
+│ └ ◐ /ar/posts/[slug]
+├ ○ /ar/privacy
+├ ○ /ar/shop
+├ ○ /ar/terms
+├ ◐ /author
+├ ○ /contact
+├ ○ /ebooks
+├ ○ /en
+├ ○ /en/about
+├ ◐ /en/author
+├   /en/books/[slug]
+│ ├ ◐ /en/books/[slug]
+│ ├ ○ /en/books/the-kingdom-behind-the-rainbow
+│ ├ ○ /en/books/buckky-riff-discovers-the-mysterious-hat
+│ └ ◐ [+3 more paths]
+├ ○ /en/contact
+├ ○ /en/contact/sent
+├ ○ /en/ebooks
+├ ○ /en/faq
+├ ○ /en/marketplace
+├   /en/posts/[slug]
+│ └ ◐ /en/posts/[slug]
+├ ○ /en/privacy
+├ ○ /en/shop
+├ ○ /en/terms
+├ ○ /faq
+├ ○ /fr
+├ ○ /fr/about
+├ ◐ /fr/author
+├   /fr/books/[slug]
+│ ├ ◐ /fr/books/[slug]
+│ ├ ○ /fr/books/the-kingdom-behind-the-rainbow
+│ ├ ○ /fr/books/buckky-riff-discovers-the-mysterious-hat
+│ └ ◐ [+3 more paths]
+├ ○ /fr/contact
+├ ○ /fr/contact/sent
+├ ○ /fr/ebooks
+├ ○ /fr/faq
+├ ○ /fr/marketplace
+├   /fr/posts/[slug]
+│ └ ◐ /fr/posts/[slug]
+├ ○ /fr/privacy
+├ ○ /fr/shop
+├ ○ /fr/terms
+├ ○ /icon.png
+├ ○ /marketplace
+├   /posts/[slug]
+│ └ ◐ /posts/[slug]
+├ ○ /privacy
+├ ○ /robots.txt
+├ ƒ /sitemap.xml
+└ ○ /terms
+
+
+○  (Static)             prerendered as static content
+◐  (Partial Prerender)  prerendered as static HTML with dynamic server-streamed content
+ƒ  (Dynamic)            server-rendered on demand
+
+Done in 180.75s.
+
+┌──────────────────────────────┐
+│ OpenNext — Generating bundle │
+└──────────────────────────────┘
+
+Bundling middleware function...
+Bundling static assets...
+Bundling cache assets...
+Building server function: default...
+Applying code patches: 16.597s
+# copyPackageTemplateFiles
+[35m⚙️ Bundling the OpenNext server...
+[0m
+[35mWorker saved in `.open-next\worker.js` 🚀
+[0m
+OpenNext build complete.
+CF_BUILD_EXIT=0

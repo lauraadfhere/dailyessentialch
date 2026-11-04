@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daily Essential | Journal</title>
+  <style>
+    :root {
+      --ink: #1b1b1b;
+      --header: #232323;
+      --footer: #c7c7c3;
+      --gold: #a28d00;
+      --muted: #72726d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Geist, Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: #fff;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 80rem; margin: 0 auto; padding: 0 1.25rem; }
+    @media (min-width: 640px) { .wrap { padding: 0 2.25rem; } }
+    @media (min-width: 1024px) { .wrap { padding: 0 3rem; } }
+
+    /* Header */
+    .site-header { background: var(--header); color: #fff; padding: 1.5rem 0; }
+    .brand { font-family: Fraunces, Georgia, serif; font-weight: 700; font-size: 2rem; letter-spacing: -.03em; }
+    .site-nav { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin-top: .75rem; font-size: .875rem; font-weight: 500; }
+    .site-nav a:hover { color: #f2d600; }
+    .read-tag { display: inline-block; margin-left: .75rem; font-size: 10px; letter-spacing: .14em; color: #f2d600; }
+
+    /* Hero */
+    .hero { padding: 4rem 0; }
+    .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .18em; color: var(--muted); }
+    .hero h1 { margin: 1.25rem 0 0; max-width: 46rem; font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 500; line-height: .92; letter-spacing: -.07em; }
+    .hero p { max-width: 36rem; margin-top: 1.5rem; font-size: 1.125rem; line-height: 1.6; color: #4a4a46; }
+    .button {
+      display: inline-block; margin-top: 2rem; padding: .85rem 1.5rem;
+      border: 1px solid var(--ink); font-size: 11px; font-weight: 600; letter-spacing: .14em;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+    .button:hover { background: var(--gold); border-color: var(--gold); color: #fff; }
+
+    /* Post list */
+    .posts { border-top: 1px solid #e4e4df; padding: 3rem 0; }
+    .posts h2 { margin: 0 0 1.5rem; font-family: Fraunces, Georgia, serif; font-size: 2rem; font-weight: 600; letter-spacing: -.03em; }
+    .post-row { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 1.25rem 0; border-top: 1px solid #e4e4df; }
+    .post-row:hover .post-title { color: var(--gold); }
+    .post-title { font-size: 1.25rem; font-weight: 600; letter-spacing: -.02em; transition: color .2s; }
+    .post-date { font-size: 11px; letter-spacing: .14em; color: #858580; white-space: nowrap; }
+
+    /* Footer */
+    .site-footer { background: var(--footer); color: var(--ink); padding: 1.5rem 0 2rem; text-align: center; }
+    .alphabet-sphere { display: block; width: min(18rem, 100%); height: auto; margin: 0 auto .5rem; }
+    .alphabet-sphere .band { fill: rgba(34, 34, 34, .8); font-family: Georgia, "Times New Roman", serif; font-size: 6.5px; letter-spacing: .3px; }
+    .alphabet-sphere .spin { transform-origin: 210px 96px; animation: wave 14s linear infinite; }
+    .alphabet-sphere .spin.reverse { animation-direction: reverse; animation-duration: 22s; }
+    @keyframes wave {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @media (prefers-reduced-motion: reduce) { .alphabet-sphere .spin { animation: none; } }
+    .footer-tagline { margin: .75rem 0 0; font-size: 1rem; font-weight: 500; color: rgba(0, 0, 0, .75); }
+    .footer-copy { margin: .75rem 0 0; font-size: 11px; font-weight: 600; letter-spacing: .14em; color: rgba(0, 0, 0, .6); }
+    .footer-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem 1.25rem; margin-top: 1rem; font-size: 10px; font-weight: 600; letter-spacing: .12em; color: rgba(0, 0, 0, .55); }
+    .footer-nav a:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <div>
+        <a class="brand" href="#">DailyEssential</a>
+        <span class="read-tag">READ</span>
+      </div>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#">Home</a>
+        <a href="#posts">Latest Posts</a>
+        <a href="#">Author</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#">Ebooks</a>
+        <a href="#">Shop</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <p class="eyebrow">INDEPENDENT AUTHOR</p>
+        <h1>Simple ideas, written daily.</h1>
+        <p>Short essays on habits, money and making small things well. New posts every week.</p>
+        <a class="button" href="#posts">READ THE LATEST</a>
+      </div>
+    </section>
+
+    <section class="posts" id="posts">
+      <div class="wrap">
+        <h2>Latest Posts</h2>
+        <a class="post-row" href="#">
+          <span class="post-title">A calmer morning routine</span>
+          <span class="post-date">NOV 2026</span>
+        </a>
+        <a class="post-row" href="#">
+          <span class="post-title">Keeping a budget that you actually use</span>
+          <span class="post-date">OCT 2026</span>
+        </a>
+        <a class="post-row" href="#">
+          <span class="post-title">Writing for ten minutes a day</span>
+          <span class="post-date">OCT 2026</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <svg class="alphabet-sphere" viewBox="0 0 420 200" aria-hidden="true" focusable="false">
+        <defs>
+          <path id="band-a" d="M 122 96 A 88 22 0 0 0 298 96" fill="none" />
+          <path id="band-b" d="M 150 60 A 60 15 0 0 0 270 60" fill="none" />
+          <path id="band-c" d="M 150 132 A 60 15 0 0 0 270 132" fill="none" />
+        </defs>
+        <g class="spin">
+          <text class="band"><textPath href="#band-a">ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNOPQRSTUVWXYZ</textPath></text>
+          <text class="band"><textPath href="#band-b">ABCDEFGHIJKLMNOPQRSTUVWXYZ</textPath></text>
+          <text class="band"><textPath href="#band-c">ABCDEFGHIJKLMNOPQRSTUVWXYZ</textPath></text>
+        </g>
+      </svg>
+      <p class="brand" style="color:var(--ink);font-size:1.5rem;margin:0">DailyEssential</p>
+      <p class="footer-tagline">Simple essays, written daily.</p>
+      <p class="footer-copy">© 2026 DAILY ESSENTIAL. ALL RIGHTS RESERVED.</p>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Author</a>
+        <a href="#">Contact</a>
+        <a href="#">FAQ</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

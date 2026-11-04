@@ -1,0 +1,166 @@
+▲ Next.js 16.4.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.22.112.1:3000
+- Environments: .env.local
+✓ Ready in 3.1s
+✓ Running next.config.ts took 487ms
+- Cache Components enabled
+- Partial Prefetching enabled
+
+○ Compiling /en ...
+ GET /en 200 in 4.5s (next.js: 603ms, application-code: 3.9s)
+ GET /en 200 in 4.0s (next.js: 12ms, application-code: 4.0s)
+ GET /admin/login 200 in 2.7s (next.js: 135ms, application-code: 2.6s)
+ GET /fr/posts/cybersecurity-in-the-age-of-ai-defending-against-intelligent-threats 200 in 13.1s (next.js: 73ms, generate-params: 10.1s, application-code: 2.9s)
+ GET /api/posts?locale=en 200 in 3.6s (next.js: 501ms, application-code: 3.1s)
+ GET /en 200 in 500ms (next.js: 3ms, application-code: 496ms)
+ GET /en 200 in 355ms (next.js: 3ms, application-code: 352ms)
+ GET /en 200 in 533ms (next.js: 2ms, application-code: 531ms)
+ GET /en 200 in 606ms (next.js: 3ms, application-code: 603ms)
+ GET /api/posts?locale=en 200 in 900ms (next.js: 18ms, application-code: 882ms)
+Error: Route "/fr/posts/[slug]": Next.js encountered uncached data during prerendering or a navigation.
+
+`fetch(...)` or `connection()` accessed outside of `<Suspense>` prevents the route from being prerendered or the navigation from being instant, leading to a slower user experience.
+
+Ways to fix this:
+  - [stream] Provide a placeholder with `<Suspense fallback={...}>` around the data access
+  - [cache] Cache the data access with `"use cache"` (does not apply to `connection()`)
+  - [block] Set `export const instant = false` to allow a blocking route
+
+Learn more: https://nextjs.org/docs/messages/blocking-prerender-dynamic
+    at query (src\lib\parse.ts:98:26)
+    at <anonymous> (src\lib\parse.ts:132:71)
+    at Array.map (<anonymous>:1:18)
+    at findBySlug (src\lib\parse.ts:132:52)
+    at getPost (src\lib\parse.ts:140:27)
+    at PostPage (src\app\posts\[slug]\page.tsx:74:29)
+    at FrenchPostPage (src\app\fr\posts\[slug]\page.tsx:11:10)
+   96 | async function query(className: string, parameters: URLSearchParams): Promise<ParseRecord[]> {
+   97 |   const { url, appId, restKey } = config();
+>  98 |   const response = await fetch(`${url}/classes/${className}?${parameters}`, {
+      |                          ^
+   99 |     headers: {
+  100 |       "X-Parse-Application-Id": appId,
+  101 |       "X-Parse-REST-API-Key": restKey,
+[browser] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/fr/posts/..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <LoadingBoundaryProvider loading={[...]}>
+                      <SegmentViewNode type="layout" pagePath="layout.tsx">
+                        <SegmentTrieNode>
+                        <link>
+                        <script>
+                        <RootLayout>
+                          <html
+                            lang="en"
+                            className="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__var..."
+-                           suppresshydrationwarning="true"
+-                           data-qb-installed="true"
+                          >
+                  ...
+ 
+ GET /api/comments?slug=cybersecurity-in-the-age-of-ai-defending-against-intelligent-threats&postId=IdFBtlns4B 200 in 272ms (next.js: 70ms, application-code: 201ms)
+ GET /fr/faq 200 in 222ms (next.js: 24ms, application-code: 197ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /en 200 in 310ms (next.js: 3ms, application-code: 307ms)
+ GET /api/posts?locale=en 200 in 711ms (next.js: 4ms, application-code: 707ms)
+ GET /en/about 200 in 450ms (next.js: 53ms, application-code: 396ms)
+ GET /en 200 in 377ms (next.js: 16ms, application-code: 362ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /api/posts?locale=en 200 in 811ms (next.js: 3ms, application-code: 809ms)
+ GET /en/author 200 in 729ms (next.js: 44ms, application-code: 685ms)
+Error: Route "/en/author": Next.js encountered uncached data during prerendering or a navigation.
+
+`fetch(...)` or `connection()` accessed outside of `<Suspense>` prevents the route from being prerendered or the navigation from being instant, leading to a slower user experience.
+
+Ways to fix this:
+  - [stream] Provide a placeholder with `<Suspense fallback={...}>` around the data access
+  - [cache] Cache the data access with `"use cache"` (does not apply to `connection()`)
+  - [block] Set `export const instant = false` to allow a blocking route
+
+Learn more: https://nextjs.org/docs/messages/blocking-prerender-dynamic
+    at AuthorPage (src\app\author\page.tsx:12:19)
+    at Page (src\app\en\author\page.tsx:16:10)
+  10 |
+  11 | export async function AuthorPage({ locale = "en" }: { locale?: Locale }) {
+> 12 |   await connection();
+     |                   ^
+  13 |   const copy = messages[locale];
+  14 |   const page = copy.author;
+  15 |   const profile = await getProfile();
+○ Compiling /_not-found/page ...
+ GET /student/id 404 in 5.9s (next.js: 5.6s, application-code: 351ms)
+[browser] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/student/id" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <LoadingBoundaryProvider loading={[...]}>
+                      <SegmentViewNode type="layout" pagePath="layout.tsx">
+                        <SegmentTrieNode>
+                        <link>
+                        <script>
+                        <RootLayout>
+                          <html
+                            lang="en"
+                            className="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__var..."
+-                           suppresshydrationwarning="true"
+-                           data-qb-installed="true"
+                          >
+                  ...
+ 
+ GET /en 200 in 121ms (next.js: 4ms, application-code: 117ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /api/posts?locale=en 200 in 340ms (next.js: 2ms, application-code: 338ms)
+ GET /en 200 in 137ms (next.js: 16ms, application-code: 121ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /api/posts?locale=en 200 in 361ms (next.js: 16ms, application-code: 345ms)
+ GET /api/posts?locale=en 200 in 571ms (next.js: 2ms, application-code: 569ms)
+ GET /en 200 in 294ms (next.js: 4ms, application-code: 290ms)
+ GET /api/posts?locale=en 200 in 314ms (next.js: 3ms, application-code: 311ms)
+ GET /en 200 in 404ms (next.js: 3ms, application-code: 402ms)
+ GET /en 200 in 1898ms (next.js: 178ms, application-code: 1719ms)
+ GET /api/posts?locale=en 200 in 1008ms (next.js: 10ms, application-code: 998ms)
+○ Compiling /en/ebooks ...
+ GET /en 200 in 3.4s (next.js: 283ms, application-code: 3.1s)
+ GET /api/posts?locale=en 200 in 2.8s (next.js: 23ms, application-code: 2.7s)
+ GET /en 200 in 823ms (next.js: 105ms, application-code: 718ms)
+ GET /api/posts?locale=en 503 in 709ms (next.js: 119ms, application-code: 589ms)

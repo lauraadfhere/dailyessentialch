@@ -1,0 +1,20 @@
+yarn run v1.22.22
+$ node ./node_modules/next/dist/bin/next dev -p 3000
+▲ Next.js 16.4.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.27.0.1:3000
+- Environments: .env.local
+✓ Ready in 2.3s
+✓ Running next.config.ts took 257ms
+⨯ Another next dev server is already running.
+
+- Local:        http://localhost:56015
+- PID:          20600
+- Dir:          C:\Users\DELL\Desktop\elspith\DAILYESSENTIAL2\daily-essential
+- Log:          .next\dev\logs\next-development.log
+
+You can access the existing server at http://localhost:56015,
+or run taskkill /PID 20600 /F to stop it and start a new one.
+[?25h
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
