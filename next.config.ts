@@ -48,8 +48,9 @@ const nextConfig: NextConfig = {
   },
 
   /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Cache Components is disabled: on Cloudflare Workers (OpenNext) it hangs
+  // requests until the runtime cancels them (opennextjs-cloudflare#1318).
+  // Re-enable cacheComponents + partialPrefetching once that fix ships.
   turbopack: {
     rules: {
       "*.css": {
