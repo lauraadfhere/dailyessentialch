@@ -2,6 +2,7 @@
 
 import { isSafeImageUrl } from "@/lib/profile";
 import { DEFAULT_LOGO_SETTINGS, normaliseLogoSettings, type LogoSettings } from "@/lib/logo-config";
+import { fetchWithTimeout } from "@/lib/cf-timeout";
 
 const LOGO_CLASS = "SiteLogo";
 const LOGO_KEY = "primary";
@@ -30,10 +31,10 @@ async function findRecord(): Promise<LogoRecord | null> {
   const settings = config();
   if (!settings) return null;
   const parameters = new URLSearchParams({ where: JSON.stringify({ key: LOGO_KEY }), limit: "1" });
-  const response = await fetch(`${settings.url}/classes/${LOGO_CLASS}?${parameters}`, {
+  const response = await fetchWithTimeout(`${settings.url}/classes/${LOGO_CLASS}?${parameters}`, {
     headers: { "X-Parse-Application-Id": settings.appId, "X-Parse-REST-API-Key": settings.restKey },
     cache: "no-store",
-    signal: AbortSignal.timeout(8000),
+    timeoutMs: 3000,
   });
   if (!response.ok) return null;
   const body = await response.json() as { results?: LogoRecord[] };

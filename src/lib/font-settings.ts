@@ -1,6 +1,7 @@
 // Server-only: reads PARSE_REST_KEY, so never import this from a Client Component.
 
 import { DEFAULT_FONT_SETTINGS, normaliseFontSettings, type FontSettings } from "@/lib/font-config";
+import { fetchWithTimeout } from "@/lib/cf-timeout";
 
 const FONT_CLASS = "SiteFont";
 const FONT_KEY = "primary";
@@ -29,10 +30,10 @@ async function findRecord(): Promise<FontRecord | null> {
   const settings = config();
   if (!settings) return null;
   const parameters = new URLSearchParams({ where: JSON.stringify({ key: FONT_KEY }), limit: "1" });
-  const response = await fetch(`${settings.url}/classes/${FONT_CLASS}?${parameters}`, {
+  const response = await fetchWithTimeout(`${settings.url}/classes/${FONT_CLASS}?${parameters}`, {
     headers: { "X-Parse-Application-Id": settings.appId, "X-Parse-REST-API-Key": settings.restKey },
     cache: "no-store",
-    signal: AbortSignal.timeout(8000),
+    timeoutMs: 2000,
   });
   if (!response.ok) return null;
   const body = (await response.json()) as { results?: FontRecord[] };

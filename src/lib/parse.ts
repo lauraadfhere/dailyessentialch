@@ -1,6 +1,8 @@
 // Keep this module in server-only entry points (route handlers, metadata, and Server Components).
 // It reads PARSE_REST_KEY and must never be imported by a Client Component.
 
+import { fetchWithTimeout } from "@/lib/cf-timeout";
+
 export type PostTranslation = { title: string; excerpt: string; content: string };
 
 export type Post = {
@@ -116,13 +118,13 @@ function toPost(record: ParseRecord): Post | null {
 
 async function query(className: string, parameters: URLSearchParams): Promise<ParseRecord[]> {
   const { url, appId, restKey } = config();
-  const response = await fetch(`${url}/classes/${className}?${parameters}`, {
+  const response = await fetchWithTimeout(`${url}/classes/${className}?${parameters}`, {
     headers: {
       "X-Parse-Application-Id": appId,
       "X-Parse-REST-API-Key": restKey,
     },
     cache: "no-store",
-    signal: AbortSignal.timeout(8000),
+    timeoutMs: 8000,
   });
 
   const body = await response.json() as ParseResponse;
@@ -325,7 +327,7 @@ async function categoryPointer(name: string) {
 export async function getCategories(): Promise<CategoryOption[]> {
   const { url } = config();
   const parameters = new URLSearchParams({ limit: "100", order: "name" });
-  const response = await fetch(`${url}/classes/Category?${parameters}`, { headers: writeHeaders(), cache: "no-store", signal: AbortSignal.timeout(8000) });
+  const response = await fetchWithTimeout(`${url}/classes/Category?${parameters}`, { headers: writeHeaders(), cache: "no-store", timeoutMs: 8000 });
   if (!response.ok) return [];
   const body = await response.json() as ParseResponse;
   return (body.results ?? []).map((record) => ({
