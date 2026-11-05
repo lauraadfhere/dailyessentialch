@@ -35,5 +35,21 @@ export function readPostInput(body: unknown, existingPublishedAt: string | null 
   const coverImage = typeof raw.coverImage === "string" && raw.coverImage.trim() ? raw.coverImage.trim() : null;
   if (coverImage && !isSafeImageUrl(coverImage)) return { error: "The cover must be a site path or an http(s) image link." };
 
-  return { input: { title, slug: slugify(slugInput || title), content, excerpt, locale, status, category, publishedAt, coverImage } };
+  const translations: Record<string, { title: string; excerpt: string; content: string }> = {};
+  if (raw.translations && typeof raw.translations === "object" && !Array.isArray(raw.translations)) {
+    for (const [key, value] of Object.entries(raw.translations as Record<string, unknown>)) {
+      const code = key.trim().toLowerCase();
+      if (!(locales as readonly string[]).includes(code)) continue;
+      if (!value || typeof value !== "object") continue;
+      const entry = value as Record<string, unknown>;
+      const entryTitle = typeof entry.title === "string" ? entry.title.trim() : "";
+      const entryExcerpt = typeof entry.excerpt === "string" ? entry.excerpt.trim() : "";
+      const entryContent = typeof entry.content === "string" ? entry.content.trim() : "";
+      if (entryTitle.length > 200) return { error: `Keep the ${code} title under 200 characters.` };
+      if (!entryTitle && !entryContent) continue;
+      translations[code] = { title: entryTitle, excerpt: entryExcerpt, content: entryContent };
+    }
+  }
+
+  return { input: { title, slug: slugify(slugInput || title), content, excerpt, locale, status, category, publishedAt, coverImage, translations } };
 }

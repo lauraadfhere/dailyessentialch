@@ -4,9 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { useSiteLogo } from "../../components/site-chrome";
+import { DEFAULT_LOGO } from "@/lib/logo-config";
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const logo = useSiteLogo();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -40,7 +43,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-[#f2f3f3] font-sans text-[#0f1111]">
       <header className="bg-[#323232] px-5 py-3 text-white">
         <Link href="/en" aria-label="Daily Essential" className="inline-block">
-          <Image src="/daily-essential-white.png" alt="Daily Essential" width={4000} height={1009} sizes="160px" className="h-auto w-40" />
+          <Image src={logo.headerUrl} unoptimized={logo.headerUrl !== DEFAULT_LOGO} alt="Daily Essential" width={4000} height={1009} sizes={`${logo.headerWidth}px`} style={{ width: logo.headerWidth }} className="h-auto" />
         </Link>
       </header>
 

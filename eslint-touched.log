@@ -1,0 +1,6 @@
+
+C:\Users\DELL\Desktop\elspith\DAILYESSENTIAL2\daily-essential\src\app\page.tsx
+  176:40  warning  'index' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 1 problem (0 errors, 1 warning)
+

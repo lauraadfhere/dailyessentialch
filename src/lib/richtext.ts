@@ -7,15 +7,17 @@
 export type RichTag =
   | "p" | "br" | "strong" | "em" | "u" | "ul" | "ol" | "li" | "a" | "blockquote" | "h2" | "h3"
   | "h1" | "h4" | "pre" | "code" | "hr" | "img" | "figure" | "figcaption" | "span" | "div"
-  | "table" | "thead" | "tbody" | "tr" | "th" | "td";
+  | "table" | "thead" | "tbody" | "tr" | "th" | "td" | "iframe";
 
 export type RichNode =
   | { type: "text"; value: string }
-  | { type: "element"; tag: RichTag; href?: string; src?: string; alt?: string; children: RichNode[] };
+  | { type: "element"; tag: RichTag; href?: string; src?: string; alt?: string; variant?: string; children: RichNode[] };
 
 type TagMap = Record<string, RichTag>;
 
 const VOID = new Set<RichTag>(["br", "hr", "img"]);
+/** Embeds whose source must be one of these hosts (no arbitrary iframes). */
+const EMBED_HOSTS = ["www.youtube.com", "youtube.com", "www.youtube-nocookie.com", "player.vimeo.com"];
 const BLOCKS = new Set<RichTag>(["p", "div", "ul", "ol", "li", "blockquote", "h1", "h2", "h3", "h4", "pre", "figure", "hr", "table", "thead", "tbody", "tr"]);
 /** Blocks that a new sibling block must not close (paragraphs belong inside them). */
 const KEEP_OPEN = new Set<RichTag>(["ul", "ol", "table", "thead", "tbody", "tr", "td", "th", "figure"]);
@@ -33,6 +35,7 @@ export const ARTICLE_TAGS: TagMap = {
   div: "div", h1: "h1", h4: "h4", pre: "pre", code: "code", hr: "hr", img: "img",
   figure: "figure", figcaption: "figcaption", span: "span",
   table: "table", thead: "thead", tbody: "tbody", tr: "tr", th: "th", td: "td",
+  iframe: "iframe",
 };
 
 const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " };
@@ -72,6 +75,17 @@ function safeHref(value?: string) {
   }
 }
 
+/** Only https embeds from the allowed video hosts survive. */
+function safeEmbed(value?: string) {
+  if (!value) return undefined;
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "https:" && EMBED_HOSTS.includes(url.hostname) ? url.toString() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function safeSrc(value?: string) {
   if (!value) return undefined;
   const src = value.trim();
@@ -86,18 +100,18 @@ function safeSrc(value?: string) {
 
 export function parseRichText(html: string, allowed: TagMap = MESSAGE_TAGS): RichNode[] {
   const root: RichNode[] = [];
-  const stack: { tag: RichTag; href?: string; children: RichNode[] }[] = [];
+  const stack: { tag: RichTag; href?: string; variant?: string; children: RichNode[] }[] = [];
   const target = () => (stack.length ? stack[stack.length - 1].children : root);
   const top = () => stack[stack.length - 1]?.tag;
   const source = html.replace(/<!--[\s\S]*?-->/g, "").replace(/<![^>]*>/g, "");
 
-  const open = (tag: RichTag, href?: string) => stack.push({ tag, href, children: [] });
+  const open = (tag: RichTag, href?: string, variant?: string) => stack.push({ tag, href, variant, children: [] });
   const closeTop = () => {
     const frame = stack.pop();
     if (!frame) return;
     const parent = target();
     if (frame.tag === "a" && !frame.href) parent.push(...frame.children);
-    else parent.push({ type: "element", tag: frame.tag, href: frame.href, children: frame.children });
+    else parent.push({ type: "element", tag: frame.tag, href: frame.href, variant: frame.variant, children: frame.children });
   };
   const closeWhile = (predicate: (tag: RichTag) => boolean) => {
     while (stack.length && predicate(stack[stack.length - 1].tag)) closeTop();
@@ -135,6 +149,19 @@ export function parseRichText(html: string, allowed: TagMap = MESSAGE_TAGS): Ric
       continue;
     }
 
+    if (tag === "iframe") {
+      const src = safeEmbed(attribute(match[3], "src"));
+      if (src) target().push({ type: "element", tag: "iframe", src, children: [] });
+      // Skip any fallback text up to the closing tag.
+      const close = source.toLowerCase().indexOf("</iframe", pattern.lastIndex);
+      if (close !== -1) {
+        const end = source.indexOf(">", close);
+        pattern.lastIndex = end === -1 ? source.length : end + 1;
+        cursor = pattern.lastIndex;
+      }
+      continue;
+    }
+
     if (tag === "hr") {
       target().push({ type: "element", tag: "hr", children: [] });
       continue;
@@ -151,7 +178,11 @@ export function parseRichText(html: string, allowed: TagMap = MESSAGE_TAGS): Ric
     else if (tag === "thead" || tag === "tbody") closeWhile((openTag) => openTag === "thead" || openTag === "tbody" || openTag === "tr" || CELLS.has(openTag));
     else if (BLOCKS.has(tag)) closeWhile((openTag) => !KEEP_OPEN.has(openTag));
 
-    open(tag, tag === "a" ? safeHref(attribute(match[3], "href")) : undefined);
+    open(
+      tag,
+      tag === "a" ? safeHref(attribute(match[3], "href")) : undefined,
+      tag === "a" && attribute(match[3], "data-variant") === "button" ? "button" : undefined,
+    );
   }
 
   if (cursor < source.length) {
@@ -172,11 +203,15 @@ export function serializeRichText(nodes: RichNode[]): string {
         if (node.tag === "img") {
           return `<img src="${escapeHtml(node.src ?? "")}"${node.alt ? ` alt="${escapeHtml(node.alt)}"` : ""}>`;
         }
+        if (node.tag === "iframe") return "";
         return `<${node.tag}>`;
       }
       const inner = serializeRichText(node.children);
+      if (node.tag === "iframe") return "";
       if (node.tag === "a" && !node.href) return inner;
-      const attributes = node.tag === "a" ? ` href="${escapeHtml(node.href ?? "")}" target="_blank" rel="noreferrer noopener"` : "";
+      const attributes = node.tag === "a"
+        ? ` href="${escapeHtml(node.href ?? "")}" target="_blank" rel="noreferrer noopener"${node.variant ? ` data-variant="${escapeHtml(node.variant)}"` : ""}`
+        : "";
       return `<${node.tag}${attributes}>${inner}</${node.tag}>`;
     })
     .join("");

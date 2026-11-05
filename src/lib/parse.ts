@@ -1,6 +1,8 @@
 // Keep this module in server-only entry points (route handlers, metadata, and Server Components).
 // It reads PARSE_REST_KEY and must never be imported by a Client Component.
 
+export type PostTranslation = { title: string; excerpt: string; content: string };
+
 export type Post = {
   id: string;
   slug: string;
@@ -12,6 +14,8 @@ export type Post = {
   locale: string | null;
   publishedAt: string | null;
   coverImage: string | null;
+  /** Optional per-language versions of the title, excerpt and body, keyed by locale. */
+  translations: Record<string, PostTranslation>;
 };
 
 type ParseDate = { __type?: string; iso?: string };
@@ -73,6 +77,22 @@ function isPublished(record: ParseRecord): boolean {
   return !status || PUBLISHED_STATUSES.has(status);
 }
 
+function translationsValue(value: unknown): Record<string, PostTranslation> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const result: Record<string, PostTranslation> = {};
+  for (const [key, entry] of Object.entries(value as Record<string, unknown>)) {
+    if (!entry || typeof entry !== "object") continue;
+    const item = entry as Record<string, unknown>;
+    const translation = {
+      title: textValue(item.title),
+      excerpt: textValue(item.excerpt),
+      content: contentValue(item.content),
+    };
+    if (translation.title || translation.content) result[key.toLowerCase()] = translation;
+  }
+  return result;
+}
+
 function toPost(record: ParseRecord): Post | null {
   const slug = textValue(record.slug);
   const title = textValue(record.title);
@@ -90,6 +110,7 @@ function toPost(record: ParseRecord): Post | null {
     locale: textValue(record.locale).toLowerCase() || null,
     publishedAt: dateValue(record.publishedAt) || dateValue(record.createdAt),
     coverImage: imageValue(record),
+    translations: translationsValue(record.translations),
   };
 }
 
@@ -112,6 +133,18 @@ function orderPosts(posts: Post[]) {
   return posts.sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || ""));
 }
 
+/** Returns the post in the requested language when a translation exists, otherwise the original text. */
+export function localizePost(post: Post, locale?: string): Post {
+  const translation = locale ? post.translations[locale] : undefined;
+  if (!translation) return post;
+  return {
+    ...post,
+    title: translation.title || post.title,
+    excerpt: translation.excerpt || post.excerpt,
+    content: translation.content || post.content,
+  };
+}
+
 export async function getPosts(locale?: string): Promise<Post[]> {
   const parameters = new URLSearchParams({ order: "-publishedAt", limit: "100", include: "category" });
   const results = await Promise.all(POST_CLASSES.map((className) => query(className, parameters)));
@@ -119,11 +152,11 @@ export async function getPosts(locale?: string): Promise<Post[]> {
 
   for (const record of results.flat()) {
     const post = toPost(record);
-    if (!post || (locale && post.locale && post.locale !== locale)) continue;
+    if (!post) continue;
     if (!unique.has(post.slug)) unique.set(post.slug, post);
   }
 
-  return orderPosts([...unique.values()]);
+  return orderPosts([...unique.values()]).map((post) => localizePost(post, locale));
 }
 
 export async function getPost(slug: string): Promise<Post | null> {
@@ -218,6 +251,8 @@ export type PostInput = {
   category: string | null;
   publishedAt: string | null;
   coverImage: string | null;
+  /** Per-language title, excerpt and body; empty strings remove a translation. */
+  translations?: Record<string, PostTranslation>;
 };
 
 export type CategoryOption = { id: string; name: string; slug: string };
@@ -308,6 +343,14 @@ async function postFields(input: PostInput) {
     status: input.status,
   };
   if (input.locale) fields.locale = input.locale;
+  const translations: Record<string, PostTranslation> = {};
+  for (const [locale, entry] of Object.entries(input.translations ?? {})) {
+    const title = entry.title.trim();
+    const excerpt = entry.excerpt.trim();
+    const content = entry.content.trim();
+    if (title || excerpt || content) translations[locale] = { title, excerpt, content };
+  }
+  fields.translations = translations;
   fields.coverImage = input.coverImage;
   if (input.publishedAt) fields.publishedAt = { __type: "Date", iso: input.publishedAt };
   if (input.category) {

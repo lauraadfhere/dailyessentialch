@@ -42,6 +42,9 @@ export type Copy = {
     nextPage: string;
   };
   home: {
+    /** Home titles bypass the brand template, so the brand is written once here. */
+    metaTitle: string;
+    metaDescription: string;
     searchLabel: string;
     searchPlaceholder: string;
     close: string;
@@ -144,7 +147,7 @@ export type Copy = {
     authorResponse: string;
   };
   author: { metaTitle: string; kicker: string; name: string; lead: string; paragraphs: string[]; signature: string; cta: string };
-  post: { allPosts: string; aboutAuthor: string; authorBio: string; contents: string };
+  post: { allPosts: string; aboutAuthor: string; authorBio: string; contents: string; contentsShow: string; contentsHide: string };
   comments: {
     heading: string; leave: string; yourName: string; namePlaceholder: string; yourComment: string; commentPlaceholder: string;
     submit: string; reviewed: string; empty: string; loading: string; sending: string; saved: string; unavailable: string; saveError: string;
@@ -183,6 +186,8 @@ export const messages: Record<Locale, Copy> = {
       nextPage: "Next page",
     },
     home: {
+      metaTitle: "Daily Essential | Everyday essentials, rituals and books",
+      metaDescription: "Notes on everyday objects, rituals and ideas, plus books by author D. Buckky Moral. Explore the journal, ebooks and reader favourites.",
       searchLabel: "Search posts",
       searchPlaceholder: "Search posts",
       close: "Close",
@@ -347,6 +352,7 @@ export const messages: Record<Locale, Copy> = {
       aboutAuthor: "ABOUT THE AUTHOR",
       authorBio: "Independent author and storyteller creating imaginative worlds for readers of all ages.",
       contents: "Contents",
+      contentsShow: "Show table of contents", contentsHide: "Hide table of contents",
     },
     comments: {
       heading: "COMMENTS", leave: "Leave a comment", yourName: "YOUR NAME", namePlaceholder: "e.g. Ada Lovelace",
@@ -393,6 +399,8 @@ export const messages: Record<Locale, Copy> = {
       nextPage: "Page suivante",
     },
     home: {
+      metaTitle: "Daily Essential | Essentiels du quotidien, rituels et livres",
+      metaDescription: "Notes sur les objets du quotidien, les rituels et les idées, ainsi que les livres de D. Buckky Moral. Découvrez le journal, les ebooks et les favoris des lecteurs.",
       searchLabel: "Rechercher des articles",
       searchPlaceholder: "Rechercher des articles",
       close: "Fermer",
@@ -557,6 +565,7 @@ export const messages: Record<Locale, Copy> = {
       aboutAuthor: "À PROPOS DE L’AUTEUR",
       authorBio: "Auteur et conteur indépendant qui crée des mondes imaginatifs pour les lecteurs de tout âge.",
       contents: "Sommaire",
+      contentsShow: "Afficher le sommaire", contentsHide: "Masquer le sommaire",
     },
     comments: {
       heading: "COMMENTAIRES", leave: "Laisser un commentaire", yourName: "VOTRE NOM", namePlaceholder: "ex. Ada Lovelace",
@@ -603,6 +612,8 @@ export const messages: Record<Locale, Copy> = {
       nextPage: "الصفحة التالية",
     },
     home: {
+      metaTitle: "Daily Essential | أساسيات الحياة اليومية والطقوس والكتب",
+      metaDescription: "ملاحظات عن أشياء الحياة اليومية والطقوس والأفكار، إضافة إلى كتب D. Buckky Moral. استكشف المدونة والكتب الإلكترونية ومفضلات القرّاء.",
       searchLabel: "البحث في المقالات",
       searchPlaceholder: "البحث في المقالات",
       close: "إغلاق",
@@ -767,6 +778,7 @@ export const messages: Record<Locale, Copy> = {
       aboutAuthor: "عن المؤلف",
       authorBio: "مؤلف وروائي مستقل يبتكر عوالم خيالية لقرّاء من كل الأعمار.",
       contents: "المحتويات",
+      contentsShow: "إظهار المحتويات", contentsHide: "إخفاء المحتويات",
     },
     comments: {
       heading: "التعليقات", leave: "اترك تعليقًا", yourName: "اسمك", namePlaceholder: "مثال: آدا لافليس",

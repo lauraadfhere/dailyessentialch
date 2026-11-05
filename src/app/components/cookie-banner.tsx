@@ -14,11 +14,15 @@ export function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    try {
-      if (!window.localStorage.getItem(STORAGE_KEY)) setVisible(true);
-    } catch {
-      setVisible(true);
-    }
+    // Check storage after mount so server and client markup match; deferred so the update is not synchronous in the effect.
+    const timer = window.setTimeout(() => {
+      try {
+        if (!window.localStorage.getItem(STORAGE_KEY)) setVisible(true);
+      } catch {
+        setVisible(true);
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   if (!visible || pathname.startsWith("/admin")) return null;

@@ -170,9 +170,16 @@ function renderHtml(nodes: RichNode[], ids: HeadingIds, inPre = false, inTable =
       case "blockquote": return <blockquote key={index} className={styles.quote}>{children}</blockquote>;
       case "pre": return <pre key={index} className={styles.pre}><code>{children}</code></pre>;
       case "code": return inPre ? <code key={index}>{children}</code> : <code key={index} className={styles.codeInline}>{children}</code>;
-      case "a": return node.href
-        ? <a key={index} href={node.href} className={styles.link} target="_blank" rel="noreferrer noopener">{children}</a>
-        : <span key={index}>{children}</span>;
+      case "a": {
+        if (!node.href) return <span key={index}>{children}</span>;
+        if (node.variant === "button") {
+          return <a key={index} href={node.href} className="my-2 inline-flex items-center rounded-[6px] bg-[#1b1b1b] px-5 py-3 text-[13px] font-semibold tracking-[.08em] text-white no-underline transition hover:bg-[#a28d00]" target="_blank" rel="noreferrer noopener">{children}</a>;
+        }
+        return <a key={index} href={node.href} className={styles.link} target="_blank" rel="noreferrer noopener">{children}</a>;
+      }
+      case "iframe": return node.src
+        ? <div key={index} className="my-9 aspect-video w-full overflow-hidden rounded-xl bg-black"><iframe src={node.src} title="Embedded video" className="h-full w-full border-0" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /></div>
+        : null;
       case "img": return node.src
         // eslint-disable-next-line @next/next/no-img-element
         ? <img key={index} src={node.src} alt={node.alt ?? ""} loading="lazy" referrerPolicy="no-referrer" className="article-image my-9 h-auto w-full rounded-xl" />

@@ -14,6 +14,10 @@ const tabs = [
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/books", label: "Books" },
   { href: "/admin/profile", label: "Profile" },
+  { href: "/admin/logo", label: "Logo" },
+  { href: "/admin/fonts", label: "Fonts" },
+  { href: "/admin/legal/privacy", label: "Privacy" },
+  { href: "/admin/legal/terms", label: "Terms" },
 ];
 
 const groups = [
@@ -33,6 +37,13 @@ const groups = [
   {
     heading: "PROFILE",
     items: [{ href: "/admin/profile", label: "Avatar and bio" }],
+  },
+  {
+    heading: "LEGAL",
+    items: [
+      { href: "/admin/legal/privacy", label: "Privacy policy" },
+      { href: "/admin/legal/terms", label: "Terms of use" },
+    ],
   },
 ];
 

@@ -24,7 +24,11 @@ function time(value: string | null) {
  * Sorted newest first; the bell reads this feed and counts the items it has not seen yet.
  */
 export async function getAdminNotifications(): Promise<AdminNotification[]> {
-  const [messages, comments] = await Promise.all([getContactMessages(), getCommentsForModeration()]);
+  // Each source is read on its own, so a failing Parse class does not hide the other queue.
+  const [messagesResult, commentsResult] = await Promise.allSettled([getContactMessages(), getCommentsForModeration()]);
+  if (messagesResult.status === "rejected" && commentsResult.status === "rejected") throw messagesResult.reason;
+  const messages = messagesResult.status === "fulfilled" ? messagesResult.value : [];
+  const comments = commentsResult.status === "fulfilled" ? commentsResult.value : [];
 
   const contact: AdminNotification[] = messages
     .filter((message) => !message.isHandled)

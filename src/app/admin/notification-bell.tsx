@@ -27,13 +27,9 @@ function timeAgo(value: string | null) {
 export function NotificationBell() {
   const [items, setItems] = useState<AdminNotification[]>([]);
   const [open, setOpen] = useState(false);
-  const [seenAt, setSeenAt] = useState(0);
+  const [seenAt, setSeenAt] = useState(() => (typeof window === "undefined" ? 0 : Number(window.localStorage.getItem(SEEN_KEY)) || 0));
   const [failed, setFailed] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setSeenAt(Number(window.localStorage.getItem(SEEN_KEY)) || 0);
-  }, []);
 
   useEffect(() => {
     let active = true;
@@ -52,9 +48,15 @@ export function NotificationBell() {
     }
     load();
     const timer = window.setInterval(load, POLL_MS);
+    // Refresh when the admin comes back to this tab, so handled items drop off promptly.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       active = false;
       window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
 

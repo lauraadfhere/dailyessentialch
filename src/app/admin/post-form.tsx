@@ -18,7 +18,15 @@ export type PostFormValues = {
   category: string;
   publishedAt: string | null;
   coverImage: string | null;
+  translations?: Record<string, { title: string; excerpt: string; content: string }>;
 };
+
+const translationLanguages = [
+  { code: "fr", name: "French" },
+  { code: "ar", name: "Arabic" },
+] as const;
+
+type TranslationDraft = { title: string; excerpt: string; content: string };
 
 function slugifyClient(value: string) {
   return value
@@ -57,6 +65,14 @@ export function PostForm({ mode, initial, categories }: { mode: "create" | "edit
   const [coverUploading, setCoverUploading] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [translations, setTranslations] = useState<Record<string, TranslationDraft>>(() => ({
+    fr: { title: "", excerpt: "", content: "", ...initial?.translations?.fr },
+    ar: { title: "", excerpt: "", content: "", ...initial?.translations?.ar },
+  }));
+
+  function updateTranslation(code: string, field: keyof TranslationDraft, value: string) {
+    setTranslations((current) => ({ ...current, [code]: { ...current[code], [field]: value } }));
+  }
 
   const effectiveSlug = slugTouched ? slug : slugifyClient(title);
 
@@ -101,6 +117,7 @@ export function PostForm({ mode, initial, categories }: { mode: "create" | "edit
       category,
       publishedAt: initial?.publishedAt ?? null,
       coverImage,
+      translations,
     };
 
     try {
@@ -235,6 +252,36 @@ export function PostForm({ mode, initial, categories }: { mode: "create" | "edit
             onChange={setContent}
           />
         </div>
+      </section>
+
+      <section className="rounded-lg border border-[#d5d9d9] bg-white p-5">
+        <h2 className="text-[17px] font-medium">Translations</h2>
+        <p className="mt-1 text-[12px] text-[#565959]">Visitors reading in these languages see this text. Leave a language empty to show the original post.</p>
+        {translationLanguages.map((language) => (
+          <div key={language.code} className="mt-5 space-y-4 border-t border-[#e3e6e6] pt-5">
+            <h3 className="text-[14px] font-bold">{language.name} ({language.code})</h3>
+            <div>
+              <label htmlFor={`translation-${language.code}-title`} className={labelClass}>Title</label>
+              <input id={`translation-${language.code}-title`} dir={language.code === "ar" ? "rtl" : "ltr"} value={translations[language.code].title} onChange={(event) => updateTranslation(language.code, "title", event.target.value)} maxLength={200} className={inputClass} />
+            </div>
+            <div>
+              <label htmlFor={`translation-${language.code}-excerpt`} className={labelClass}>Excerpt</label>
+              <textarea id={`translation-${language.code}-excerpt`} dir={language.code === "ar" ? "rtl" : "ltr"} value={translations[language.code].excerpt} onChange={(event) => updateTranslation(language.code, "excerpt", event.target.value)} rows={3} className={inputClass} />
+            </div>
+            <div>
+              <span className={labelClass}>Content</span>
+              <RichTextEditor
+                key={`${language.code}-${mode}`}
+                id={`translation-${language.code}-content`}
+                label={`${language.name} content`}
+                placeholder="Translate the post…"
+                copy={editorCopy}
+                value={translations[language.code].content}
+                onChange={(value) => updateTranslation(language.code, "content", value)}
+              />
+            </div>
+          </div>
+        ))}
       </section>
 
       <div className="flex flex-wrap items-center gap-4">

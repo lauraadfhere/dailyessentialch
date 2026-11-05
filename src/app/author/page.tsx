@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { connection } from "next/server";
 import { messages, type Locale } from "@/lib/i18n";
+import { getPosts } from "@/lib/parse";
 import { getProfile, isSafeImageUrl } from "@/lib/profile";
 import { jsonLd, pageMetadata, personJsonLd } from "@/lib/seo";
 import AuthorHeroArt, { AuthorPen } from "./author-hero-art";
@@ -13,6 +14,7 @@ export async function AuthorPage({ locale = "en" }: { locale?: Locale }) {
   const copy = messages[locale];
   const page = copy.author;
   const profile = await getProfile();
+  const latestPost = (await getPosts(locale).catch(() => []))[0];
   const name = profile.name || page.name;
   const avatar = profile.avatarUrl && isSafeImageUrl(profile.avatarUrl) ? profile.avatarUrl : "";
   const paragraphs = profile.bio
@@ -54,6 +56,12 @@ export async function AuthorPage({ locale = "en" }: { locale?: Locale }) {
           <aside className="border-t-2 border-[#1b1b1b] pt-6 lg:mt-2" aria-label={page.metaTitle}>
             <p className="max-w-sm text-3xl font-medium leading-[1.02] tracking-[-.05em] sm:text-4xl">{page.signature}</p>
             <Link href={`/${locale}#posts`} className="author-cta mt-9 inline-flex items-center gap-3 text-[11px] font-semibold tracking-[.15em] text-[#1b1b1b]">{page.cta} <span aria-hidden="true">→</span></Link>
+            {latestPost ? (
+              <div className="mt-8">
+                <p className="text-[11px] font-semibold tracking-[.15em] text-[#72726d]">LATEST POST</p>
+                <Link href={`/${locale}/posts/${latestPost.slug}`} className="author-cta mt-3 block text-2xl font-normal leading-tight tracking-[-.02em] text-[#1b1b1b]">{latestPost.title}</Link>
+              </div>
+            ) : null}
           </aside>
         </div>
       </section>

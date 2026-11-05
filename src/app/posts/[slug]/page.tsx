@@ -4,10 +4,10 @@ import Link from "next/link";
 import localFont from "next/font/local";
 import { notFound, redirect } from "next/navigation";
 import { SiteFooter, SiteHeader } from "../../components/site-chrome";
-import { getPost, type Post } from "@/lib/parse";
+import { getPost, localizePost, type Post } from "@/lib/parse";
 import { getLocale, messages, type Locale } from "@/lib/i18n";
 import { ARTICLE_TAGS, looksLikeHtml, parseRichText, richTextToPlain } from "@/lib/richtext";
-import { DEFAULT_OG_IMAGE, OG_IMAGE_SIZE, OG_LOCALES, SITE_NAME, articleJsonLd, breadcrumbJsonLd, jsonLd } from "@/lib/seo";
+import { DEFAULT_OG_IMAGE, INDEXABLE_ROBOTS, OG_IMAGE_SIZE, OG_LOCALES, SITE_NAME, articleJsonLd, breadcrumbJsonLd, jsonLd } from "@/lib/seo";
 import RichArticleContent from "../../components/rich-article-content";
 import ArticleToc from "./article-toc";
 import PostEnhancements from "./post-enhancements";
@@ -39,46 +39,50 @@ export async function postMetadata(params: PostPageProps["params"], locale: Loca
   const copy = messages[locale];
   if (!post) return { title: copy.post.allPosts, robots: { index: false, follow: false } };
 
-  const description = descriptionFor(post) || copy.post.authorBio;
-  // A record holds one language only, so the locale routes that merely repeat it point
-  // their canonical at the owning locale instead of competing with it as duplicates.
+  const localized = localizePost(post, getLocale(locale));
+  const description = descriptionFor(localized) || copy.post.authorBio;
+  // A record holds one language by default; when there is no translation for this
+  // route its canonical points at the owning locale instead of competing as a duplicate.
   const owner = getLocale(post.locale);
-  const canonical = `/${owner}/posts/${post.slug}`;
+  const hasTranslation = Boolean(post.translations[getLocale(locale)]);
+  const canonical = hasTranslation ? `/${getLocale(locale)}/posts/${post.slug}` : `/${owner}/posts/${post.slug}`;
   const cover = post.coverImage && /^https?:\/\//.test(post.coverImage) ? post.coverImage : DEFAULT_OG_IMAGE;
   const image = cover === DEFAULT_OG_IMAGE
-    ? { url: cover, ...OG_IMAGE_SIZE, alt: post.title }
-    : { url: cover, alt: post.title };
+    ? { url: cover, ...OG_IMAGE_SIZE, alt: localized.title }
+    : { url: cover, alt: localized.title };
 
   return {
-    title: post.title,
+    title: localized.title,
     description,
     alternates: { canonical },
+    robots: INDEXABLE_ROBOTS,
     openGraph: {
       type: "article",
       url: canonical,
       siteName: SITE_NAME,
-      locale: OG_LOCALES[owner],
-      title: post.title,
+      locale: OG_LOCALES[getLocale(locale)],
+      title: localized.title,
       description,
       section: post.category,
       authors: [copy.author.name],
       ...(post.publishedAt ? { publishedTime: post.publishedAt, modifiedTime: post.publishedAt } : {}),
       images: [image],
     },
-    twitter: { card: "summary_large_image", title: post.title, description, images: [cover] },
+    twitter: { card: "summary_large_image", title: localized.title, description, images: [cover] },
   };
 }
 
 export async function PostPage({ params, locale = "en" }: PostPageProps) {
   const { slug } = await params;
-  const post = await getPost(slug);
-  if (!post) notFound();
-  if (post.slug !== slug) redirect(`/${locale}/posts/${post.slug}`);
+  const found = await getPost(slug);
+  if (!found) notFound();
+  if (found.slug !== slug) redirect(`/${locale}/posts/${found.slug}`);
 
   const copy = messages[getLocale(locale)];
   const backArrow = copy.dir === "rtl" ? "→" : "←";
+  const post = localizePost(found, getLocale(locale));
   // Structured data describes the article itself, so it is keyed on the owning locale.
-  const owner = getLocale(post.locale);
+  const owner = getLocale(found.locale);
   const breadcrumbs = breadcrumbJsonLd([
     { name: SITE_NAME, path: `/${owner}` },
     { name: messages[owner].home.latestPosts, path: `/${owner}#posts` },
@@ -105,7 +109,7 @@ export async function PostPage({ params, locale = "en" }: PostPageProps) {
           </div>
         </aside>
       </article>
-      <ArticleToc label={copy.post.contents} />
+      <ArticleToc label={copy.post.contents} showLabel={copy.post.contentsShow} hideLabel={copy.post.contentsHide} />
       <PostEnhancements slug={post.slug} postId={post.id} copy={messages[locale].comments} />
       <SiteFooter />
     </main>

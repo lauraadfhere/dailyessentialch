@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getLocale, messages, type Locale } from "@/lib/i18n";
-import { LanguageMenu, SiteFooter } from "./components/site-chrome";
+import { LanguageMenu, SiteFooter, useSiteLogo } from "./components/site-chrome";
+import { DEFAULT_LOGO } from "@/lib/logo-config";
 
 type Post = { id: string; slug: string; title: string };
 type CategoryIconName = "journal" | "library" | "shop" | "discover";
@@ -30,6 +31,7 @@ export function Home({ locale: initialLocale = "en" }: { locale?: string }) {
   const copy = messages[locale];
   const base = `/${locale}`;
   const arrow = copy.dir === "rtl" ? "←" : "→";
+  const logo = useSiteLogo();
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -37,18 +39,27 @@ export function Home({ locale: initialLocale = "en" }: { locale?: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeQuery, setActiveQuery] = useState("");
 
   useEffect(() => {
     document.documentElement.lang = locale;
     document.documentElement.dir = copy.dir;
   }, [locale, copy.dir]);
 
+  // Debounce typing, then let the server search and rank posts (title, category, excerpt and body).
+  useEffect(() => {
+    const timer = window.setTimeout(() => setActiveQuery(query.trim()), 250);
+    return () => window.clearTimeout(timer);
+  }, [query]);
+
   useEffect(() => {
     const controller = new AbortController();
 
     async function loadPosts() {
       try {
-        const response = await fetch(`/api/posts?locale=${encodeURIComponent(locale)}`, { signal: controller.signal });
+        const params = new URLSearchParams({ locale });
+        if (activeQuery) params.set("q", activeQuery);
+        const response = await fetch(`/api/posts?${params.toString()}`, { signal: controller.signal });
         const data = await response.json() as { posts?: Post[]; error?: string };
         if (!response.ok) throw new Error(data.error || copy.home.loadError);
         setPosts(data.posts ?? []);
@@ -61,9 +72,9 @@ export function Home({ locale: initialLocale = "en" }: { locale?: string }) {
 
     void loadPosts();
     return () => controller.abort();
-  }, [locale, copy.home.loadError]);
+  }, [locale, activeQuery, copy.home.loadError]);
 
-  const visiblePosts = posts.filter((post) => post.title.toLowerCase().includes(query.toLowerCase()));
+  const visiblePosts = posts;
   const postsPerPage = 30;
   const totalPages = Math.max(1, Math.ceil(visiblePosts.length / postsPerPage));
   const safePage = Math.min(currentPage, totalPages);
@@ -75,7 +86,7 @@ export function Home({ locale: initialLocale = "en" }: { locale?: string }) {
         
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="flex items-center justify-between gap-5">
-            <div className="flex items-center gap-3"><a href="#top" aria-label={copy.a11y.home}><Image src="/daily-essential-white.png" alt="Daily Essential" width={4000} height={1009} sizes="(max-width: 640px) 160px, 192px" priority className="h-auto w-40 sm:w-48" /></a><span aria-hidden="true" className="header-read-tag hidden sm:inline-block">READ</span></div>
+            <div className="flex items-center gap-3"><a href="#top" aria-label={copy.a11y.home}><Image src={logo.headerUrl} unoptimized={logo.headerUrl !== DEFAULT_LOGO} alt="Daily Essential" width={4000} height={1009} sizes={`${logo.headerWidth}px`} style={{ width: logo.headerWidth }} priority className="h-auto" /></a><span aria-hidden="true" className="header-read-tag hidden sm:inline-block">READ</span></div>
             <div className="flex items-center gap-3">
               <a className="amazon-author-link" href="https://www.amazon.com/stores/author/B0HPTRT8FN/about?ingress=0&visitId=3582be7a-e747-46e5-9936-f41a5de8cd40&ref_=aufs_ap_ahdr_dsk_ab&ccs_id=53d2a28f-5397-4dec-a3ff-1491c53ec2a5" target="_blank" rel="noreferrer" aria-label={copy.a11y.amazon}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.2 16.4 9.1 7.2h2.2l2.9 9.2H12l-.6-2H8.8l-.6 2H6.1Zm3.9-6.6-.8 2.9h1.6l-.8-2.9Z" /><path d="M5.8 18.2c3.5 2.1 8.2 2.1 11.8 0" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></a>
               <a className="flex h-5 w-5 items-center justify-center text-[#f2d600] transition hover:scale-110 hover:text-white" href="https://www.linkedin.com" target="_blank" rel="noreferrer" aria-label="Daily Essential on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current"><path d="M5.1 3.5A2.1 2.1 0 1 1 5 7.7a2.1 2.1 0 0 1 .1-4.2ZM3.3 9h3.6v11.5H3.3V9Zm5.8 0h3.5v1.6h.1c.5-.9 1.7-2 3.7-2 4 0 4.7 2.5 4.7 5.8v6.1h-3.6V15c0-1.3 0-3-2-3s-2.3 1.4-2.3 2.9v5.6H9.1V9Z" /></svg></a>
@@ -85,7 +96,7 @@ export function Home({ locale: initialLocale = "en" }: { locale?: string }) {
             </div>
           </div>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
-            <nav className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium" aria-label={copy.a11y.mainNav}>
+            <nav className="home-nav-links flex flex-wrap gap-x-5 gap-y-2 text-base font-semibold sm:text-lg" aria-label={copy.a11y.mainNav}>
               <a className="site-nav-link transition" href="#posts">{copy.nav.latest}</a>
               <a className="site-nav-link transition" href={`${base}/author`}>{copy.nav.author}</a>
               <a className="site-nav-link transition" href={`${base}/about`}>{copy.nav.about}</a>
@@ -95,7 +106,7 @@ export function Home({ locale: initialLocale = "en" }: { locale?: string }) {
             </nav>
             <a className="text-[11px] font-semibold tracking-[0.14em] text-white/60 transition hover:text-white sm:hidden" href="#posts">{copy.home.searchLabel}</a>
           </div>
-          <a className="mt-7 inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.16em] text-white/60 transition hover:text-white" href="#posts">{copy.home.scrollToPosts} <span className="text-base leading-none" aria-hidden="true">&#8595;</span></a>
+          <a className="home-scroll-link mt-7 inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.16em] text-white/60 transition hover:text-white" href="#posts">{copy.home.scrollToPosts} <span className="text-base leading-none" aria-hidden="true">&#8595;</span></a>
         </div>
         {searchOpen && <div className="absolute inset-x-0 top-0 z-10 bg-[#1c1c1c] px-5 py-6 sm:px-9 lg:px-12"><form className="mx-auto flex max-w-7xl items-center gap-4" role="search" onSubmit={(event) => event.preventDefault()}><label className="sr-only" htmlFor="post-search">{copy.home.searchLabel}</label><input id="post-search" autoFocus value={query} onChange={(event) => { setQuery(event.target.value); setCurrentPage(1); }} className="min-w-0 flex-1 border-b border-white/60 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/45" placeholder={copy.home.searchPlaceholder} /><button type="button" className="text-[11px] font-semibold tracking-[0.14em] text-white/70 hover:text-white" onClick={() => setSearchOpen(false)}>{copy.home.close.toUpperCase()}</button></form></div>}
       </header>
@@ -104,7 +115,7 @@ export function Home({ locale: initialLocale = "en" }: { locale?: string }) {
         <div className="mx-auto flex max-w-7xl items-start justify-between gap-6">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold tracking-[-.02em]">{copy.home.authorKicker}</p>
-            <h1 id="home-author-heading" className="mt-1 text-4xl font-semibold tracking-[-.015em] leading-[1] sm:text-5xl">{copy.author.name}</h1>
+            <h1 id="home-author-heading" className="home-author-title mt-1 text-4xl font-semibold tracking-[-.015em] leading-[1] sm:text-5xl">{copy.author.name}</h1>
             <p className="home-author-text mt-2 max-w-2xl text-base leading-6 sm:text-lg">{copy.home.authorLead}</p>
             <p className="home-author-text mt-3 max-w-2xl text-sm leading-6 sm:text-base">{copy.home.authorStory}</p>
             <p className="mt-3 text-sm font-semibold italic leading-6 sm:text-base">{copy.home.authorTagline}</p>
@@ -180,7 +191,7 @@ export function Home({ locale: initialLocale = "en" }: { locale?: string }) {
       </section>
 
       <SiteFooter />
-      <a href="#top" className="fixed bottom-5 end-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#1c1c1c] text-lg text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-black" aria-label={copy.a11y.backToTop}>&#8593;</a>
+      <a href="#top" aria-label={copy.a11y.backToTop} className="fixed bottom-5 end-5 z-40 flex items-center gap-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f2d600]"><span style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}>{copy.a11y.backToTop}</span><span className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#0b2b57] shadow-md" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="m6 14 6-6 6 6" /></svg></span></a>
     </main>
   );
 }

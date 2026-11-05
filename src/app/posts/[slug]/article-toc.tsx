@@ -21,7 +21,7 @@ function CloseIcon() {
 }
 
 /** Small floating contents button for long articles. Headings are read from the rendered body. */
-export default function ArticleToc({ label = "Contents" }: { label?: string }) {
+export default function ArticleToc({ label = "Contents", showLabel = "Show table of contents", hideLabel = "Hide table of contents" }: { label?: string; showLabel?: string; hideLabel?: string }) {
   const [items, setItems] = useState<Item[]>([]);
   const [open, setOpen] = useState(false);
   const [activeId, setActiveId] = useState("");
@@ -30,16 +30,20 @@ export default function ArticleToc({ label = "Contents" }: { label?: string }) {
   useEffect(() => {
     const body = document.getElementById("article-body");
     if (!body) return;
-    const headings = Array.from(body.querySelectorAll<HTMLElement>("h2[id], h3[id]")).filter(
-      (heading) => heading.textContent?.trim(),
-    );
-    setItems(
-      headings.map((heading) => ({
-        id: heading.id,
-        text: heading.textContent!.trim(),
-        level: heading.tagName === "H3" ? 3 : 2,
-      })),
-    );
+    // Read the rendered headings after paint so the state update is not synchronous in the effect.
+    const frame = window.requestAnimationFrame(() => {
+      const headings = Array.from(body.querySelectorAll<HTMLElement>("h2[id], h3[id]")).filter(
+        (heading) => heading.textContent?.trim(),
+      );
+      setItems(
+        headings.map((heading) => ({
+          id: heading.id,
+          text: heading.textContent!.trim(),
+          level: heading.tagName === "H3" ? 3 : 2,
+        })),
+      );
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -111,7 +115,7 @@ export default function ArticleToc({ label = "Contents" }: { label?: string }) {
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        aria-label={open ? "Hide table of contents" : "Show table of contents"}
+        aria-label={open ? hideLabel : showLabel}
         className="ml-auto flex h-12 w-12 items-center justify-center rounded-full border border-[#1b1b1b] bg-[#1b1b1b] text-[#f2d600] shadow-[0_12px_30px_-12px_rgba(27,27,27,.75)] transition hover:-translate-y-0.5 hover:bg-[#f2d600] hover:text-[#1b1b1b]"
       >
         {open ? <CloseIcon /> : <ListIcon />}

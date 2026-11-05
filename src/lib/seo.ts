@@ -12,6 +12,19 @@ export const OG_IMAGE_SIZE = { width: 2000, height: 2000 };
 
 export const OG_LOCALES: Record<Locale, string> = { en: "en_CH", fr: "fr_CH", ar: "ar_AR" };
 
+/** Crawl policy for indexable pages: large image previews and untruncated snippets. */
+export const INDEXABLE_ROBOTS = {
+  index: true,
+  follow: true,
+  googleBot: {
+    index: true,
+    follow: true,
+    "max-image-preview": "large" as const,
+    "max-snippet": -1,
+    "max-video-preview": -1,
+  },
+};
+
 /** Profiles that verify the author/organisation entities; only stable public URLs belong here. */
 export const SOCIAL_PROFILES = [
   "https://www.amazon.com/stores/author/B0HPTRT8FN/about",
@@ -78,17 +91,32 @@ type PageMetadataInput = {
   description: string;
   /** Set false for placeholder pages that should stay crawlable but out of the index. */
   index?: boolean;
+  /** Share image for this page; defaults to the author portrait. */
+  image?: string;
+  imageAlt?: string;
+  /** The root template appends the site name, so titles that already carry it opt out. */
+  absoluteTitle?: boolean;
 };
 
-export function pageMetadata({ locale, path = "", title, description, index = true }: PageMetadataInput): Metadata {
+export function pageMetadata({
+  locale,
+  path = "",
+  title,
+  description,
+  index = true,
+  image = DEFAULT_OG_IMAGE,
+  imageAlt = SITE_NAME,
+  absoluteTitle = false,
+}: PageMetadataInput): Metadata {
   const url = localePath(locale, path);
-  const image = { url: DEFAULT_OG_IMAGE, ...OG_IMAGE_SIZE, alt: SITE_NAME };
+  const socialImage = image === DEFAULT_OG_IMAGE ? { url: image, ...OG_IMAGE_SIZE, alt: imageAlt } : { url: image, alt: imageAlt };
 
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     alternates: { canonical: url, languages: languageAlternates(path) },
-    ...(index ? {} : { robots: { index: false, follow: true } }),
+    // Opted-out pages must not inherit an "index" directive, so each page states its own policy.
+    robots: index ? INDEXABLE_ROBOTS : { index: false, follow: true },
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
@@ -97,9 +125,9 @@ export function pageMetadata({ locale, path = "", title, description, index = tr
       url,
       title,
       description,
-      images: [image],
+      images: [socialImage],
     },
-    twitter: { card: "summary_large_image", title, description, images: [DEFAULT_OG_IMAGE] },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
   };
 }
 
@@ -109,8 +137,9 @@ export function homeMetadata(locale: Locale): Metadata {
   return pageMetadata({
     locale,
     path: "",
-    title: `${SITE_NAME} | ${copy.home.latestPosts}`,
-    description: `${copy.home.authorLead} ${copy.home.exploreHeading}`,
+    title: copy.home.metaTitle,
+    description: copy.home.metaDescription,
+    absoluteTitle: true,
   });
 }
 
@@ -236,6 +265,9 @@ export function bookMetadata(book: Book, locale: Locale): Metadata {
     path: `/books/${book.slug}`,
     title: `${book.shortTitle} | ${copy.author.name}`,
     description,
+    // Each title shares its own cover instead of the author portrait.
+    image: book.cover,
+    imageAlt: book.title,
   });
 }
 

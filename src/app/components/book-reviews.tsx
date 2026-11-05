@@ -61,8 +61,6 @@ export default function BookReviews({ bookSlug, locale, copy }: { bookSlug: stri
 
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true);
-    setLoadError(false);
 
     fetch(`/api/reviews?book=${encodeURIComponent(bookSlug)}`, { signal: controller.signal })
       .then(async (response) => {

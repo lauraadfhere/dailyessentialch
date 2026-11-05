@@ -58,6 +58,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ slug:
           category: post.category === "JOURNAL" ? "" : post.category,
           publishedAt: post.publishedAt,
           coverImage: post.coverImage,
+          translations: post.translations,
         }}
       />
     </div>
