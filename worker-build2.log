@@ -1,0 +1,147 @@
+
+┌─────────────────────────────┐
+│ OpenNext — Cloudflare build │
+└─────────────────────────────┘
+
+WARN OpenNext is not fully compatible with Windows.
+WARN For optimal performance, it is recommended to use Windows Subsystem for Linux (WSL).
+WARN While OpenNext may function on Windows, it could encounter unpredictable failures during runtime.
+App directory: C:\Users\DELL\Desktop\elspith\DAILYESSENTIAL2\daily-essential
+Next.js version : 16.4.3
+@opennextjs/cloudflare version: 1.20.16
+@opennextjs/aws version: 4.1.15
+workerd compatibility_date: 2026-11-01
+
+┌─────────────────────────────────┐
+│ OpenNext — Building Next.js app │
+└─────────────────────────────────┘
+
+▲ Next.js 16.4.3 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 1140ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 32.0s
+  Running TypeScript ...
+  Finished TypeScript in 46s ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/91) ...
+  Generating static pages using 3 workers (22/91) 
+  Generating static pages using 3 workers (45/91) 
+  Generating static pages using 3 workers (68/91) 
+✓ Generating static pages using 3 workers (91/91) in 12.6s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /about
+├ ƒ /admin
+├ ƒ /admin/books
+├ ƒ /admin/books/new
+├ ƒ /admin/comments
+├ ƒ /admin/fonts
+├ ƒ /admin/legal/[page]
+├ ƒ /admin/login
+├ ƒ /admin/logo
+├ ƒ /admin/messages
+├ ƒ /admin/posts
+├ ƒ /admin/posts/[slug]
+├ ƒ /admin/posts/new
+├ ƒ /admin/profile
+├ ƒ /admin/reviews
+├ ƒ /api/admin/books
+├ ƒ /api/admin/comments/[id]
+├ ƒ /api/admin/fonts
+├ ƒ /api/admin/legal/[page]
+├ ƒ /api/admin/login
+├ ƒ /api/admin/logo
+├ ƒ /api/admin/logout
+├ ƒ /api/admin/messages/[id]
+├ ƒ /api/admin/notifications
+├ ƒ /api/admin/posts
+├ ƒ /api/admin/posts/[id]
+├ ƒ /api/admin/profile
+├ ƒ /api/admin/reviews/[id]
+├ ƒ /api/admin/reviews/[id]/reply
+├ ƒ /api/admin/reviews/[id]/reply/[replyId]
+├ ƒ /api/admin/uploads
+├ ƒ /api/comments
+├ ƒ /api/contact
+├ ƒ /api/logo
+├ ƒ /api/posts
+├ ƒ /api/reviews
+├ ○ /apple-icon.png
+├ ƒ /ar
+├ ƒ /ar/about
+├ ƒ /ar/author
+├ ƒ /ar/books/[slug]
+├ ƒ /ar/contact
+├ ƒ /ar/contact/sent
+├ ƒ /ar/ebooks
+├ ƒ /ar/faq
+├ ƒ /ar/marketplace
+├ ƒ /ar/posts/[slug]
+├ ƒ /ar/privacy
+├ ƒ /ar/shop
+├ ƒ /ar/terms
+├ ƒ /author
+├ ƒ /contact
+├ ƒ /ebooks
+├ ƒ /en
+├ ƒ /en/about
+├ ƒ /en/author
+├ ƒ /en/books/[slug]
+├ ƒ /en/contact
+├ ƒ /en/contact/sent
+├ ƒ /en/ebooks
+├ ƒ /en/faq
+├ ƒ /en/marketplace
+├ ƒ /en/posts/[slug]
+├ ƒ /en/privacy
+├ ƒ /en/shop
+├ ƒ /en/terms
+├ ƒ /faq
+├ ƒ /fr
+├ ƒ /fr/about
+├ ƒ /fr/author
+├ ƒ /fr/books/[slug]
+├ ƒ /fr/contact
+├ ƒ /fr/contact/sent
+├ ƒ /fr/ebooks
+├ ƒ /fr/faq
+├ ƒ /fr/marketplace
+├ ƒ /fr/posts/[slug]
+├ ƒ /fr/privacy
+├ ƒ /fr/shop
+├ ƒ /fr/terms
+├ ○ /icon.png
+├ ○ /manifest.webmanifest
+├ ƒ /marketplace
+├ ƒ /posts/[slug]
+├ ƒ /privacy
+├ ○ /robots.txt
+├ ƒ /sitemap.xml
+└ ƒ /terms
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+┌──────────────────────────────┐
+│ OpenNext — Generating bundle │
+└──────────────────────────────┘
+
+Bundling middleware function...
+Bundling static assets...
+Bundling cache assets...
+Building server function: default...
+Applying code patches: 56.641s
+# copyPackageTemplateFiles
+[35m⚙️ Bundling the OpenNext server...
+[0m
+[35mWorker saved in `.open-next\worker.js` 🚀
+[0m
+OpenNext build complete.
+EXIT=0

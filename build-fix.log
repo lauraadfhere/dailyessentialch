@@ -1,0 +1,112 @@
+▲ Next.js 16.4.3 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 383ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 31.4s
+  Running TypeScript ...
+  Finished TypeScript in 36.1s ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/91) ...
+  Generating static pages using 3 workers (22/91) 
+  Generating static pages using 3 workers (45/91) 
+  Generating static pages using 3 workers (68/91) 
+✓ Generating static pages using 3 workers (91/91) in 16.1s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /about
+├ ƒ /admin
+├ ƒ /admin/books
+├ ƒ /admin/books/new
+├ ƒ /admin/comments
+├ ƒ /admin/fonts
+├ ƒ /admin/legal/[page]
+├ ƒ /admin/login
+├ ƒ /admin/logo
+├ ƒ /admin/messages
+├ ƒ /admin/posts
+├ ƒ /admin/posts/[slug]
+├ ƒ /admin/posts/new
+├ ƒ /admin/profile
+├ ƒ /admin/reviews
+├ ƒ /api/admin/books
+├ ƒ /api/admin/comments/[id]
+├ ƒ /api/admin/fonts
+├ ƒ /api/admin/legal/[page]
+├ ƒ /api/admin/login
+├ ƒ /api/admin/logo
+├ ƒ /api/admin/logout
+├ ƒ /api/admin/messages/[id]
+├ ƒ /api/admin/notifications
+├ ƒ /api/admin/posts
+├ ƒ /api/admin/posts/[id]
+├ ƒ /api/admin/profile
+├ ƒ /api/admin/reviews/[id]
+├ ƒ /api/admin/reviews/[id]/reply
+├ ƒ /api/admin/reviews/[id]/reply/[replyId]
+├ ƒ /api/admin/uploads
+├ ƒ /api/comments
+├ ƒ /api/contact
+├ ƒ /api/logo
+├ ƒ /api/posts
+├ ƒ /api/reviews
+├ ○ /apple-icon.png
+├ ƒ /ar
+├ ƒ /ar/about
+├ ƒ /ar/author
+├ ƒ /ar/books/[slug]
+├ ƒ /ar/contact
+├ ƒ /ar/contact/sent
+├ ƒ /ar/ebooks
+├ ƒ /ar/faq
+├ ƒ /ar/marketplace
+├ ƒ /ar/posts/[slug]
+├ ƒ /ar/privacy
+├ ƒ /ar/shop
+├ ƒ /ar/terms
+├ ƒ /author
+├ ƒ /contact
+├ ƒ /ebooks
+├ ƒ /en
+├ ƒ /en/about
+├ ƒ /en/author
+├ ƒ /en/books/[slug]
+├ ƒ /en/contact
+├ ƒ /en/contact/sent
+├ ƒ /en/ebooks
+├ ƒ /en/faq
+├ ƒ /en/marketplace
+├ ƒ /en/posts/[slug]
+├ ƒ /en/privacy
+├ ƒ /en/shop
+├ ƒ /en/terms
+├ ƒ /faq
+├ ƒ /fr
+├ ƒ /fr/about
+├ ƒ /fr/author
+├ ƒ /fr/books/[slug]
+├ ƒ /fr/contact
+├ ƒ /fr/contact/sent
+├ ƒ /fr/ebooks
+├ ƒ /fr/faq
+├ ƒ /fr/marketplace
+├ ƒ /fr/posts/[slug]
+├ ƒ /fr/privacy
+├ ƒ /fr/shop
+├ ƒ /fr/terms
+├ ○ /icon.png
+├ ○ /manifest.webmanifest
+├ ƒ /marketplace
+├ ƒ /posts/[slug]
+├ ƒ /privacy
+├ ○ /robots.txt
+├ ƒ /sitemap.xml
+└ ƒ /terms
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

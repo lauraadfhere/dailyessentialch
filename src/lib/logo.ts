@@ -33,6 +33,7 @@ async function findRecord(): Promise<LogoRecord | null> {
   const response = await fetch(`${settings.url}/classes/${LOGO_CLASS}?${parameters}`, {
     headers: { "X-Parse-Application-Id": settings.appId, "X-Parse-REST-API-Key": settings.restKey },
     cache: "no-store",
+    signal: AbortSignal.timeout(8000),
   });
   if (!response.ok) return null;
   const body = await response.json() as { results?: LogoRecord[] };

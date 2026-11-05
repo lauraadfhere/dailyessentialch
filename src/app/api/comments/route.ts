@@ -3,13 +3,18 @@ import { normalizeRichText } from "@/lib/richtext";
 
 const MAX_NAME_LENGTH = 80;
 const MAX_COMMENT_LENGTH = 2_000;
+const MAX_SLUG_LENGTH = 200;
+// Parse object ids are short alphanumeric strings; anything else is rejected before it reaches a query.
+const OBJECT_ID = /^[A-Za-z0-9]{1,64}$/;
 
 export async function GET(request: Request) {
-  const slug = new URL(request.url).searchParams.get("slug")?.trim();
-  const postId = new URL(request.url).searchParams.get("postId")?.trim();
-  if (!slug) return Response.json({ error: "A post slug is required." }, { status: 400 });
+  const params = new URL(request.url).searchParams;
+  const slug = params.get("slug")?.trim() ?? "";
+  const postId = params.get("postId")?.trim() || undefined;
+  if (!slug || slug.length > MAX_SLUG_LENGTH) return Response.json({ error: "A post slug is required." }, { status: 400 });
+  if (postId && !OBJECT_ID.test(postId)) return Response.json({ error: "Invalid post id." }, { status: 400 });
   try {
-    return Response.json({ comments: await getComments({ slug, postId }) });
+    return Response.json({ comments: await getComments({ slug, postId }) }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unable to load comments.";
     return Response.json({ error: message }, { status: 503 });
@@ -26,6 +31,7 @@ export async function POST(request: Request) {
 
   const slug = typeof input.slug === "string" ? input.slug.trim() : "";
   const postId = typeof input.postId === "string" ? input.postId.trim() : undefined;
+  if (postId && !OBJECT_ID.test(postId)) return Response.json({ error: "Invalid post id." }, { status: 400 });
   const name = typeof input.name === "string" ? input.name.trim() : "";
   const rawMessage = typeof input.message === "string" ? input.message.trim() : "";
   // Comments may carry rich formatting; keep only the allowlisted markup before storing.

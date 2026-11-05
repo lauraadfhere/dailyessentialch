@@ -103,6 +103,7 @@ async function findRecord(key: LegalPageKey) {
   const response = await fetch(`${settings.url}/classes/${LEGAL_CLASS}?${parameters}`, {
     headers: headers(settings.appId, settings.restKey),
     cache: "no-store",
+    signal: AbortSignal.timeout(8000),
   });
   if (!response.ok) return null;
   const body = (await response.json()) as { results?: LegalRecord[] };

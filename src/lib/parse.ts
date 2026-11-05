@@ -122,6 +122,7 @@ async function query(className: string, parameters: URLSearchParams): Promise<Pa
       "X-Parse-REST-API-Key": restKey,
     },
     cache: "no-store",
+    signal: AbortSignal.timeout(8000),
   });
 
   const body = await response.json() as ParseResponse;
@@ -324,7 +325,7 @@ async function categoryPointer(name: string) {
 export async function getCategories(): Promise<CategoryOption[]> {
   const { url } = config();
   const parameters = new URLSearchParams({ limit: "100", order: "name" });
-  const response = await fetch(`${url}/classes/Category?${parameters}`, { headers: writeHeaders(), cache: "no-store" });
+  const response = await fetch(`${url}/classes/Category?${parameters}`, { headers: writeHeaders(), cache: "no-store", signal: AbortSignal.timeout(8000) });
   if (!response.ok) return [];
   const body = await response.json() as ParseResponse;
   return (body.results ?? []).map((record) => ({
